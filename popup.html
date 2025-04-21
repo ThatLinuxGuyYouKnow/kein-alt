@@ -1,3 +1,4 @@
+<!-- popup.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +10,8 @@
         body {
             font-family: Arial, sans-serif;
             margin: 10px;
-            width: 250px;
+            height: 120px;
+            width: 300px;
             background-color: black;
         }
 
@@ -21,15 +23,15 @@
         }
 
         input {
-            width: 96%;
-            padding: 8px;
+            width: 280px;
+            padding: 10px;
             margin-bottom: 16px;
             border: 1px solid #1991db;
             border-radius: 4px;
         }
 
         button {
-            width: 100%;
+            width: 280px;
             padding: 10px;
             background-color: #1da1f2;
             color: white;
@@ -46,16 +48,35 @@
         .status {
             margin-top: 10px;
             font-size: 14px;
-            color: green;
             text-align: center;
+        }
+
+        .buttonDiv {
+            align-self: center;
+            align-items: center;
+        }
+
+        /* Hide the returning user section by default */
+        #returningUserSection {
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <label for="username">Enter your main username:</label>
-    <input type="text" id="username" placeholder="e.g., YourMainAccount">
-    <button id="saveButton">Save Username</button>
+    <!-- Section for new users -->
+    <div id="newUserSection">
+        <label for="username">Enter your alt username:</label>
+        <input type="text" id="username" placeholder="e.g., YourMainAccount">
+        <div class=" buttonDiv"><button id="saveButton">Save Username</button></div>
+    </div>
+
+    <!-- Section for returning users -->
+    <div id="returningUserSection">
+        <p style="color: #1991db; font-weight: bold;">Welcome back, <span id="savedUsername"></span>!</p>
+        <div class="buttonDiv"><button id="changeUsername">Change Username</button></div>
+    </div>
+
     <div class="status" id="status"></div>
 
     <script src="popup.js"></script>
