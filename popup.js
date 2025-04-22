@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
             newUserSection.style.display = 'none';
             returningUserSection.style.display = 'block';
             savedUsernameSpan.textContent = result.mainUsername;
+
+            console.log('found saved username')
         } else {
+            console.log(result.mainUsername)
+            console.log('No username saved')
             // Show new user UI
             newUserSection.style.display = 'block';
             returningUserSection.style.display = 'none';
@@ -33,15 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
             usernameInput.value = '';
         });
     });
-
     function saveUsername() {
         const username = usernameInput.value.trim();
         if (username) {
-            chrome.storage.sync.set({ mainUsername: username }, () => {
-                statusMessage.textContent = 'Username saved successfully!';
-                statusMessage.style.color = 'green';
-                console.log('saved succeess')
-                // Switch to returning user view
+            chrome.storage.local.set({
+                username: username
+
+            }, () => {
                 newUserSection.style.display = 'none';
                 returningUserSection.style.display = 'block';
                 savedUsernameSpan.textContent = username;
@@ -52,4 +54,5 @@ document.addEventListener('DOMContentLoaded', () => {
             statusMessage.style.color = 'red';
         }
     }
+
 });
