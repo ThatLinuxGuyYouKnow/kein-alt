@@ -6,18 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveButton = document.getElementById('saveButton');
     const changeButton = document.getElementById('changeUsername');
     const statusMessage = document.getElementById('status');
-
-    // Check for existing username
-    chrome.storage.sync.get(['mainUsername'], (result) => {
-        if (result.mainUsername) {
-            // Show returning user UI
+    chrome.storage.local.get(["username"], (result) => {
+        if (result['username']) {
             newUserSection.style.display = 'none';
             returningUserSection.style.display = 'block';
             savedUsernameSpan.textContent = result.mainUsername;
 
             console.log('found saved username')
         } else {
-            console.log(result.mainUsername)
+            console.log(result.username)
             console.log('No username saved')
             // Show new user UI
             newUserSection.style.display = 'block';
@@ -25,11 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+
     // Event listeners
     saveButton.addEventListener('click', saveUsername);
     changeButton.addEventListener('click', () => {
-        // Remove stored username and show input
-        chrome.storage.sync.remove('mainUsername', () => {
+        // Remove stored username and show inputa
+        chrome.storage.sync.remove('username', () => {
             statusMessage.textContent = 'Username removed. Please enter a new one.';
             statusMessage.style.color = 'green';
             newUserSection.style.display = 'block';
