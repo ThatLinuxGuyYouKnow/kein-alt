@@ -1,47 +1,45 @@
-chrome.tabs.onUpdated.addListener(async (tabId, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (!changeInfo.url) return;
 
-  if (tab.url && (tab.url.includes('twitter.com') || tab.url.includes('x.com'))) {
-    console.log('User is on Twitter/X');
-    chrome.storage.local.get(["username"], (result) => {
-      if (result['username']) {
-        chrome.tabs.update(tabId, { url: `https://x.com/${result['username']}` });
+  const url = changeInfo.url;
+  if (url.includes('twitter.com') || url.includes('x.com')) {
+    chrome.storage.local.get(['username'], ({ username }) => {
+      if (!username) return;
+
+      const targetUrl = `https://x.com/${username}`;
+      if (url !== targetUrl) {
+        chrome.tabs.update(tabId, { url: targetUrl });
       }
     });
+
+    // ← Use `func`, not `function`
     chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      function: () => {
-        // Check if the user is logged in (assuming a simple check for a known element)
-        const isLoggedIn = document.querySelector('a[href*="/logout"]') !== null;
+      target: { tabId },
+      func: () => {
+        const isLoggedIn = !!document.querySelector('a[href*="/logout"]');
+        const existingOverlay = document.querySelector(
+          'div[style*="position: fixed;"][style*="background-color: yellow;"]'
+        );
 
         if (isLoggedIn) {
-          const overlay = document.createElement('div');
-          overlay.style.backgroundColor = 'black';
-          overlay.style.position = 'fixed';
-          overlay.style.top = '0';
-          overlay.style.left = '0';
-          overlay.style.width = '100%';
-          overlay.style.height = '100%';
-          overlay.style.zIndex = '10000';
-          document.body.appendChild(overlay);
-        } else {
-          console.log('User is not logged in')
-          // Remove any existing overlay
-          const existingOverlay = document.querySelector('div[style*="position: fixed;"][style*="background-color: black;"]');
-          if (existingOverlay) {
-            existingOverlay.remove();
+          if (!existingOverlay) {
+            const overlay = document.createElement('div');
+            Object.assign(overlay.style, {
+              backgroundColor: 'black',
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              width: '100%',
+              height: '100%',
+              zIndex: '10000',
+            });
+            document.body.appendChild(overlay);
           }
+        } else {
+          console.log('User is not logged in');
+          if (existingOverlay) existingOverlay.remove();
         }
-      }
+      },
     });
-
-    // Redirect to user profile if on the main domain
-    if (tab.url.includes('x.com') && !tab.url.includes('/')) {
-      chrome.storage.sync.get(['mainUsername'], (result) => {
-        if (result.mainUsername) {
-          chrome.tabs.update(tabId, { url: `https://x.com/${result.mainUsername}` });
-        }
-      });
-    }
   }
-
 });
