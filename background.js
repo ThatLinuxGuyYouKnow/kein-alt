@@ -1,7 +1,12 @@
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete') {
+chrome.tabs.onUpdated.addListener(async (tabId, tab) => {
+
   if (tab.url && (tab.url.includes('twitter.com') || tab.url.includes('x.com'))) {
     console.log('User is on Twitter/X');
+    chrome.storage.local.get(["username"], (result) => {
+      if (result['username']) {
+        chrome.tabs.update(tabId, { url: `https://x.com/${result.mainUsername}` });
+      }
+    });
     chrome.scripting.executeScript({
       target: { tabId: tabId },
       function: () => {
@@ -19,6 +24,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           overlay.style.zIndex = '10000';
           document.body.appendChild(overlay);
         } else {
+          console.log('User is not logged in')
           // Remove any existing overlay
           const existingOverlay = document.querySelector('div[style*="position: fixed;"][style*="background-color: black;"]');
           if (existingOverlay) {
@@ -37,5 +43,5 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       });
     }
   }
-  }
+
 });
