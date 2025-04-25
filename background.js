@@ -4,7 +4,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, tab) => {
     console.log('User is on Twitter/X');
     chrome.storage.local.get(["username"], (result) => {
       if (result['username']) {
-        chrome.tabs.update(tabId, { url: `https://x.com/${result.mainUsername}` });
+        chrome.tabs.update(tabId, { url: `https://x.com/${result['username']}` });
       }
     });
     chrome.scripting.executeScript({
