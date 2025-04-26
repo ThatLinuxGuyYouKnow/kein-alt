@@ -19,31 +19,36 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       chrome.scripting.executeScript({
         target: { tabId },
         func: () => {
-          const existingOverlay = document.querySelector(
-            'div[style*="position: fixed; height: 100%; width: 100%"][style*="background-color: black;"]'
-          );
+          const existingOverlay = Array.from(document.querySelectorAll('div'))
+            .find(div =>
+              div.style.backgroundColor === 'black' &&
+              div.style.position === 'fixed' &&
+              div.style.top === '0px' &&
+              div.style.left === '0px' &&
+              div.style.width === '100%' &&
+              div.style.height === '100%' &&
+              div.style.zIndex === '10000'
+            );
 
-          // Create overlay if it doesn't exist
-          if (!existingOverlay) {
-            const overlay = document.createElement('div');
-            Object.assign(overlay.style, {
-              backgroundColor: 'black',
-              position: 'fixed',
-              top: '0',
-              left: '0',
-              width: '100%',
-              height: '100%',
-              zIndex: '10000',
-            });
-            document.body.appendChild(overlay);
-          }
+
+
+          const overlay = document.createElement('div');
+          Object.assign(overlay.style, {
+            backgroundColor: 'black',
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            zIndex: '10000',
+          });
+          document.body.appendChild(overlay);
+
 
 
 
           const profileBtn = Array.from(document.querySelectorAll('span'))
-            .find(el => el.textContent.trim() === 'Likes' ||
-
-              el.textContent.trim() === 'Edit profile');
+            .find(el => el.textContent.trim() === 'Likes' || el.textContent.trim() === 'Edit profile');
 
           const isLoggedIn = profileBtn
 
@@ -52,9 +57,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             alert('User is logged in');
             // Keep overlay if logged in
           } else {
-            alert('User is not logged in');
+
             // Remove overlay if not logged in
             if (existingOverlay) existingOverlay.remove();
+            alert('User is not logged in');
           }
         }
       },
