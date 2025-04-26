@@ -12,7 +12,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       }
     });
 
-    // ← Use `func`, not `function`
+
     chrome.scripting.executeScript({
       target: { tabId },
       func: () => {
@@ -22,7 +22,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         if (!existingOverlay) {
           const overlay = document.createElement('div');
           Object.assign(overlay.style, {
-            backgroundColor: 'yellow',
+            backgroundColor: 'black',
             position: 'fixed',
             top: '0',
             left: '0',
@@ -39,18 +39,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 
         if (isLoggedIn) {
+          console.log('user is logged in')
           if (!existingOverlay) {
-            const overlay = document.createElement('div');
-            Object.assign(overlay.style, {
-              backgroundColor: 'yellow',
-              position: 'fixed',
-              top: '0',
-              left: '0',
-              width: '100%',
-              height: '100%',
-              zIndex: '10000',
-            });
-            document.body.appendChild(overlay);
+
           }
         } else {
           console.log('User is not logged in');
