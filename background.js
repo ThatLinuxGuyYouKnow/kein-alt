@@ -60,6 +60,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         }
       },
       );
-    }, 2000); // 2-second delay to ensure dynamic content loads
+    }, 5000); // 2-second delay to ensure dynamic content loads
   }
 });
