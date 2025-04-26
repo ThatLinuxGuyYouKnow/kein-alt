@@ -16,16 +16,33 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     chrome.scripting.executeScript({
       target: { tabId },
       func: () => {
-        const isLoggedIn = !!document.querySelector('a[href*="/logout"]');
         const existingOverlay = document.querySelector(
-          'div[style*="position: fixed;"][style*="background-color: yellow;"]'
+          'div[style*="position: fixed; height: 100%; width: 100%"][style*="background-color: yellow;"]'
         );
+        if (!existingOverlay) {
+          const overlay = document.createElement('div');
+          Object.assign(overlay.style, {
+            backgroundColor: 'yellow',
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            zIndex: '10000',
+          });
+          document.body.appendChild(overlay);
+        }
+        const profileBtn = Array.from(document.querySelectorAll('span'))
+          .find(el => el.textContent.trim() === 'Edit profile');
+        const isLoggedIn = !!profileBtn;
+
+
 
         if (isLoggedIn) {
           if (!existingOverlay) {
             const overlay = document.createElement('div');
             Object.assign(overlay.style, {
-              backgroundColor: 'black',
+              backgroundColor: 'yellow',
               position: 'fixed',
               top: '0',
               left: '0',
