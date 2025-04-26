@@ -42,12 +42,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
           const profileBtn = Array.from(document.querySelectorAll('span'))
             .find(el => el.textContent.trim() === 'Likes' ||
-              el.textContent.trim() === 'Profile' ||
+
               el.textContent.trim() === 'Edit profile');
 
-          const isLoggedIn = !!profileBtn ||
-            !!document.querySelector('a[href="/compose/tweet"]') ||
-            !!document.querySelector('a[data-testid="SideNav_NewTweet_Button"]');
+          const isLoggedIn = profileBtn
+
 
           if (isLoggedIn) {
             alert('User is logged in');
