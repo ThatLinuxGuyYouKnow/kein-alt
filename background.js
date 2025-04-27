@@ -1,5 +1,5 @@
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // Only proceed when the URL changes
+  // Redirect logic (consider adding login check here if needed)
   if (changeInfo.url) {
     const url = changeInfo.url;
     if (url.includes('twitter.com') || url.includes('x.com')) {
@@ -13,14 +13,16 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
   }
 
+  // Overlay and login check logic
   if (changeInfo.status === 'complete' && (tab.url.includes('twitter.com') || tab.url.includes('x.com'))) {
-
-    setTimeout(() => {
-      chrome.scripting.executeScript({
-        target: { tabId },
-        func: () => {
-
-          const overlay = document.createElement('div');
+    chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => {
+        // Check if overlay already exists
+        let overlay = document.querySelector('.overlay-div');
+        if (!overlay) {
+          // Create overlay
+          overlay = document.createElement('div');
           overlay.className = 'overlay-div';
           Object.assign(overlay.style, {
             backgroundColor: 'black',
@@ -30,28 +32,47 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             width: '100%',
             height: '100%',
             zIndex: '10000',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
           });
 
+          const logo = document.createElement('img');
+          logo.src = 'https://img.icons8.com/ios-filled/500/twitterx--v1.png';
+          Object.assign(logo.style, {
+            width: '120px',
+            height: 'auto',
+            opacity: '0.85',
+            pointerEvents: 'none'
+          });
+
+          overlay.appendChild(logo);
           document.body.appendChild(overlay);
-
-
-
-
-          const existingOverlay = document.querySelector('.overlay-div');
-          const profileBtn = Array.from(document.querySelectorAll('span'))
-            .find(el => el.textContent.trim() === 'Likes' || el.textContent.trim() === 'Edit profile');
-
-          const isLoggedIn = profileBtn
-
-          if (isLoggedIn) {
-            alert('User is logged in');
-          } else {
-            existingOverlay.replaceWith("")
-            alert('User is not logged in');
-          }
         }
-      },
-      );
-    }, 10000);
+
+        // Check login status using Twitter's DOM attributes
+        const observer = new MutationObserver(() => {
+          const loggedInElement = document.querySelector('a[href="/compose/tweet"][data-testid="SideNav_NewTweet_Button"]');
+          if (loggedInElement) {
+            console.log
+            overlay.remove();
+            observer.disconnect();
+          }
+        });
+
+        // Start observing the document body
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+
+        // Fallback: Remove overlay after 15s if not logged in
+        setTimeout(() => {
+          if (document.contains(overlay)) {
+            overlay.remove();
+          }
+        }, 15000);
+      }
+    });
   }
 });
