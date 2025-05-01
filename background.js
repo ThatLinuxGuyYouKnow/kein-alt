@@ -1,5 +1,5 @@
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  // Redirect logic (consider adding login check here if needed)
+
   if (changeInfo.url) {
     const url = changeInfo.url;
     if (url.includes('twitter.com') || url.includes('x.com')) {
@@ -50,23 +50,25 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
           document.body.appendChild(overlay);
         }
 
-        // Check login status using Twitter's DOM attributes
+
         const observer = new MutationObserver(() => {
           const loggedInElement = document.querySelector('a[href="/compose/tweet"][data-testid="SideNav_NewTweet_Button"]');
           if (loggedInElement) {
+
+          }
+          else {
             console.log
             overlay.remove();
             observer.disconnect();
           }
         });
 
-        // Start observing the document body
+
         observer.observe(document.body, {
           childList: true,
           subtree: true
         });
 
-        // Fallback: Remove overlay after 15s if not logged in
         setTimeout(() => {
           if (document.contains(overlay)) {
             overlay.remove();
